@@ -15,12 +15,14 @@
 - **What Changed**:
   - Re-installed the hook via `python antigravity_pulse.py install pulse` from `E:\Projects\antigravity-pulse`.
   - Updated `C:\Users\james\.gemini\antigravity-cli\settings.json` so `statusLine.command` correctly points to `python E:\Projects\antigravity-pulse\antigravity_pulse.py --hook`.
+  - Created Windows directory junction `E:\antigravity-pulse` -> `E:\Projects\antigravity-pulse` so running CLI sessions holding the pre-launch path in active memory resolve without error.
 - **Failure & Root Cause**:
   - `command failed: exit status 2 (stderr: python: can't open file 'E:\antigravity-pulse\antigravity_pulse.py': [Errno 2] No such file or directory)`.
-  - Cause: Project was moved from `E:\antigravity-pulse` to `E:\Projects\antigravity-pulse`, but `settings.json` still referenced the old non-existent path.
+  - Cause: Project was moved from `E:\antigravity-pulse` to `E:\Projects\antigravity-pulse`, but `settings.json` still referenced the old non-existent path. Running sessions cached this command string in memory.
 - **What Was Verified & How**:
   - Verified `settings.json` points to `python E:\Projects\antigravity-pulse\antigravity_pulse.py --hook`.
-  - Tested hook execution with piped mock stdin: exited code 0, rendered `Gemini · Quota ━━━━━━━─ 85% · R:1h 45m · Context ━━────── 24% · ⚡ Fast`.
+  - Verified junction `E:\antigravity-pulse` resolves directly to `E:\Projects\antigravity-pulse`.
+  - Tested hook execution on both paths with piped mock stdin: both exited code 0 and rendered `Gemini · Quota ━━━━━━━─ 85% · R:1h 45m · Context ━━────── 24% · ⚡ Fast`.
 - **Next Steps**:
   - Verify seamless rendering in active TUI sessions.
 
