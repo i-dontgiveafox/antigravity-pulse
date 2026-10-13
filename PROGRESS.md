@@ -1,15 +1,28 @@
 # Antigravity Pulse - Project Progress
 
 ## Current State
-- **Status**: Stable & Verified (Windows statusLine quoting fix applied)
+- **Status**: Stable & Verified (Relocated to `E:\Projects\antigravity-pulse` & hook path updated)
 - **Active Branch**: `main`
 - **Core CLI**: Full real-time usage monitor and footer status line for Google Antigravity CLI (`agy`).
-- **Hook Integration**: Active in `%USERPROFILE%\.gemini\antigravity-cli\settings.json` (unquoted absolute path).
+- **Hook Integration**: Active in `%USERPROFILE%\.gemini\antigravity-cli\settings.json` pointing to `E:\Projects\antigravity-pulse\antigravity_pulse.py`.
 - **Presets**: 6 built-in presets (`pulse`, `quota`, `studio`, `sprint`, `compact`, `wide`) with color-coded gauge bars and interactive builder.
 
 ---
 
 ## Log
+
+### 2026-10-14 05:25 - Fixed StatusLine Path After Project Relocation ([Errno 2])
+- **What Changed**:
+  - Re-installed the hook via `python antigravity_pulse.py install pulse` from `E:\Projects\antigravity-pulse`.
+  - Updated `C:\Users\james\.gemini\antigravity-cli\settings.json` so `statusLine.command` correctly points to `python E:\Projects\antigravity-pulse\antigravity_pulse.py --hook`.
+- **Failure & Root Cause**:
+  - `command failed: exit status 2 (stderr: python: can't open file 'E:\antigravity-pulse\antigravity_pulse.py': [Errno 2] No such file or directory)`.
+  - Cause: Project was moved from `E:\antigravity-pulse` to `E:\Projects\antigravity-pulse`, but `settings.json` still referenced the old non-existent path.
+- **What Was Verified & How**:
+  - Verified `settings.json` points to `python E:\Projects\antigravity-pulse\antigravity_pulse.py --hook`.
+  - Tested hook execution with piped mock stdin: exited code 0, rendered `Gemini · Quota ━━━━━━━─ 85% · R:1h 45m · Context ━━────── 24% · ⚡ Fast`.
+- **Next Steps**:
+  - Verify seamless rendering in active TUI sessions.
 
 ### 2026-10-14 03:41 - Fixed Windows StatusLine Path Quoting Issue ([Errno 22])
 - **What Changed**:
