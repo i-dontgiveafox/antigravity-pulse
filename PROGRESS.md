@@ -26,5 +26,5 @@
   - `python antigravity_pulse.py install pulse` executed and verified hook activation in `%USERPROFILE%\.gemini\antigravity-cli\settings.json`.
   - `python antigravity_pulse.py show` verified active connection status.
 - **Next Steps**:
-  - Publish repository to GitHub (`i-dontgiveafox/antigravity-pulse`).
-  - Maintain documentation and add tests if needed.
+  - Maintained and published to GitHub at https://github.com/i-dontgiveafox/antigravity-pulse.
+  - Test live in an interactive agy TUI session.
