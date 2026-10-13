@@ -597,6 +597,30 @@ def presets_catalog() -> None:
     print()
 
 
+def build_hook_command(script_path: Path) -> str:
+    """Build a CLI-compatible statusLine command string without problematic quotes.
+
+    Antigravity CLI evaluates command arguments using Go's filepath.IsAbs().
+    If a Windows path is wrapped in quotes ('"E:\\..."'), filepath.IsAbs() treats it
+    as relative (because the first character is '"') and prepends the active workspace
+    CWD, resulting in 'CWD\\"E:\\..."' and an [Errno 22] Invalid argument crash.
+    """
+    path_str = str(script_path.resolve())
+    if " " in path_str and sys.platform == "win32":
+        try:
+            import ctypes
+
+            buf = ctypes.create_unicode_buffer(1024)
+            if ctypes.windll.kernel32.GetShortPathNameW(path_str, buf, 1024):
+                path_str = buf.value
+        except Exception:
+            pass
+
+    if " " in path_str:
+        return f'python "{path_str}" --hook'
+    return f"python {path_str} --hook"
+
+
 def install_hook(preset: str = "pulse") -> int:
     """Configure statusLine command hook inside Antigravity CLI settings.json."""
     script_path = Path(__file__).resolve()
@@ -612,8 +636,8 @@ def install_hook(preset: str = "pulse") -> int:
             print(f"Error reading {target_settings}: {exc}", file=sys.stderr)
             return 1
 
-    # Form command string: python "<path_to_script>" --hook
-    command_str = f'python "{script_path}" --hook'
+    # Form command string without quotes if path has no spaces (avoids Windows CWD prepend bug)
+    command_str = build_hook_command(script_path)
     existing_data["statusLine"] = {
         "type": "command",
         "command": command_str,
